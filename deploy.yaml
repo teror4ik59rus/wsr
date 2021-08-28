@@ -1,0 +1,59 @@
+---
+# If you don't know the Kung Fu, you can simply transfer kickstart bash script and run it
+# Notice that it doesn't garantee you an idempotent behaviour after repetitive executio
+- name: Execute kickstart script
+  hosts: all
+  tasks:
+    - name: Upd&upg
+      apt:
+        update_cache: yes
+        name: "*"
+        state: latest
+    - name: Install NGINX REDIS
+      apt:
+        pkg:
+        - nginx
+        - redis-server
+    - name: CreateFolderCertforNginx
+      ansible.builtin.file:
+        path: /etc/nginx/cert
+        state: directory
+        mode: '0755'
+    - name: Createapp53
+      ansible.builtin.file:
+        path: /opt/app53
+        state: directory
+        mode: '0755'
+   
+    - name: download WEB53
+      get_url:
+        url: https://test-web53.s3.eu-central-1.amazonaws.com/21.08.03/web-53
+        dest: /opt/app53/
+        mode: '0755'
+    - name: download Cert for NGinx
+      get_url:
+        url: https://test-web53.s3.eu-central-1.amazonaws.com/supercert.pem
+        dest: /etc/nginx/cert/
+        mode: '0755'
+
+    - name: download PrivateKey for NGinx
+      get_url:
+        url: https://test-web53.s3.eu-central-1.amazonaws.com/supercert.key
+        dest: /etc/nginx/cert/
+        mode: '0755'
+    - name: lol
+      ansible.builtin.command:
+        command: ./opt/app53/web-53 -s
+   
+
+
+  
+    - name: Copy script
+      ansible.builtin.copy:
+        src: ./kickstart.sh
+        dest: /home/azadmin/kickstart.sh
+        mode: u=rwx,g=r,o=r
+    - name: Run script
+      ansible.builtin.shell: /home/azadmin/kickstart.sh
+
+
