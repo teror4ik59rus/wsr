@@ -41,10 +41,13 @@
         url: https://test-web53.s3.eu-central-1.amazonaws.com/supercert.key
         dest: /etc/nginx/cert/
         mode: '0755'
-    - name: lol
-      ansible.builtin.command:
-        command: ./opt/app53/web-53 -s
-   
+        #    - name: lol
+        #ansible.builtin.command:
+        #command: ./opt/app53/web-53 -s
+    - name: Copy in systemd
+      ansible.builtin.copy:
+        src: ./web53.service
+        dest: /etc/systemd/system
 
 
   

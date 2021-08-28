@@ -1,0 +1,15 @@
+[Unit]
+Description=sss
+After=network.target
+ 
+[Service]
+Type=forking
+PIDFile=/run/web53.pid
+User=redis
+Group=redis
+ExecStart=/opt/app53/web-53 -c 2config.yaml
+KillMode=none
+Restart=on-failure
+ 
+[Install]
+WantedBy=multi-user.target
